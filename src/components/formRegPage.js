@@ -1,7 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Form, Button} from "react-bootstrap";
-import ChoiceGender from "../components/choiceGender";
-import showPass from "../resources/showPassword";
+import ChoiceGender from "./ChoiceGender";
 import validateEmail from "../resources/validationEmail";
 
 function FormRegPage() {
@@ -12,6 +11,8 @@ function FormRegPage() {
   const [isPassValid, setIsPassValid] = useState(true);
   const [isPassConfirm, setIsPassConfirm] = useState(true);
   const [isFormConfirm, setIsFormConfirm] = useState(false);
+  const [isShow, setIsShow] = useState(false);
+  const [isShowConfirm, setIsShowConfirm] = useState(false);
 
   let style = {
     passShow: {
@@ -23,10 +24,15 @@ function FormRegPage() {
   };
 
   function validationForm(valueOne, valueTwo, email) {
-    setIsEmailValid(validateEmail(email));
-    setIsPassValid(valueOne.split("").length >= 6);
-    setIsPassConfirm(valueOne === valueTwo);
+    if (typeEmail !== "") setIsEmailValid(validateEmail(email));
+    if (typePass !== "") setIsPassValid(valueOne.split("").length >= 6);
+    if (typePassValid !== "") setIsPassConfirm(valueOne === valueTwo);
   }
+
+  useEffect(() => {
+    validationForm(typePass, typePassValid, typeEmail);
+    // eslint-disable-next-line
+  }, [typePass, typePassValid, typeEmail]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -48,11 +54,7 @@ function FormRegPage() {
       <h6>Gender</h6>
       <ChoiceGender />
 
-      <Form.Group
-        className="mb-3"
-        controlId="formBasicEmail"
-        style={{marginTop: "20px"}}
-      >
+      <Form.Group className="mb-3 mt-3" controlId="formBasicEmail">
         <Form.Label>
           <h6>Email address</h6>
         </Form.Label>
@@ -64,7 +66,7 @@ function FormRegPage() {
           className={
             isEmailValid ? "border border-success" : "border border-danger"
           }
-          onChange={(e) => setTypeEmail(e.currentTarget.value)}
+          onChange={(e) => setTypeEmail(e.target.value)}
           value={typeEmail}
           required
         />
@@ -91,14 +93,14 @@ function FormRegPage() {
           <h6>Password</h6>
         </Form.Label>
         <Form.Control
-          type="password"
+          type={isShow ? "text" : "password"}
           name="password"
           autoComplete="new-password"
           placeholder="Password"
           className={
             isPassValid ? "border border-success" : "border border-danger"
           }
-          onChange={(e) => setTypePass(e.currentTarget.value)}
+          onChange={(e) => setTypePass(e.target.value)}
           value={typePass}
           required
         />
@@ -110,9 +112,11 @@ function FormRegPage() {
           Password must include min 6 characters.
         </Form.Control.Feedback>
         <i
-          className="fa fa-eye icon-password"
+          className={
+            isShow ? "fa fa-eye-slash icon-password" : "fa fa-eye icon-password"
+          }
           style={style.passShow}
-          onClick={(e) => showPass(e)}
+          onClick={(e) => (isShow ? setIsShow(false) : setIsShow(true))}
         ></i>
       </Form.Group>
       <Form.Group
@@ -126,13 +130,13 @@ function FormRegPage() {
           <h6>Confirm password</h6>
         </Form.Label>
         <Form.Control
-          type="password"
+          type={isShowConfirm ? "text" : "password"}
           autoComplete="new-password"
           placeholder="Confirm password"
           className={
             isPassConfirm ? "border border-success" : "border border-danger"
           }
-          onChange={(e) => setTypePassValid(e.currentTarget.value)}
+          onChange={(e) => setTypePassValid(e.target.value)}
           value={typePassValid}
           required
         />
@@ -144,17 +148,16 @@ function FormRegPage() {
           Password mismatch.
         </Form.Control.Feedback>
         <i
-          className="fa fa-eye icon-password"
+          className={
+            isShow ? "fa fa-eye-slash icon-password" : "fa fa-eye icon-password"
+          }
           style={style.passShow}
-          onClick={(e) => showPass(e)}
+          onClick={(e) =>
+            isShowConfirm ? setIsShowConfirm(false) : setIsShowConfirm(true)
+          }
         ></i>
       </Form.Group>
-      <Button
-        variant="success"
-        type="submit"
-        style={{width: "100%"}}
-        onClick={() => validationForm(typePass, typePassValid, typeEmail)}
-      >
+      <Button variant="success" type="submit" style={{width: "100%"}}>
         Sing Up
       </Button>
       <span

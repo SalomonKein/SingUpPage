@@ -1,8 +1,8 @@
 import React from "react";
 import {Container} from "react-bootstrap";
-import FooterRegForm from "./components/footerRegPage";
-import FormRegPage from "./components/formRegPage";
-import HeaderRegForm from "./components/headerRegPage";
+import FooterRegForm from "./components/FooterRegPage";
+import FormRegPage from "./components/FormRegPage";
+import HeaderRegForm from "./components/HeaderRegPage";
 
 
 function App() {
